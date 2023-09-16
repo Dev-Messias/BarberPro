@@ -10,22 +10,25 @@ Sistema de agendamento em barbearias - desenvolvido no curso sujeito programador
 
 # Projeto
 <p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/img_projeto/Login.png" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/login.png" >
 </p>
 <p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/img_projeto/Cadastro.png" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Cadastro.png" >
 </p>
 <p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/img_projeto/Home.png" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Home.png" >
 </p>
 <p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/img_projeto/Modelos.png" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Home.png" >
 </p>
 <p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/img_projeto/Tablet.png" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Modelos.png" >
 </p>
 <p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/img_projeto/Conta.png" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Tablet.png" >
+</p>
+<p align="center" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Conta.png" >
 </p>
 
 ## Clone
