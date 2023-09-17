@@ -10,13 +10,10 @@ Sistema de agendamento em barbearias - desenvolvido no curso sujeito programador
 
 # Projeto
 <p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/login.png" >
+  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Login.png" >
 </p>
 <p align="center" >
   <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Cadastro.png" >
-</p>
-<p align="center" >
-  <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Home.png" >
 </p>
 <p align="center" >
   <img width="670" src="https://github.com/Dev-Messias/barberPro/blob/main/backend/img_projeto/Home.png" >
