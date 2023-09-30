@@ -6,13 +6,14 @@ import { Flex, Text, Center, Input, Button } from '@chakra-ui/react';
 
 import Link from 'next/link';
 
-export default function Login(){
+export default function Register(){
 
+   const [name, setName] = useState('');
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
 
-   //função do botão
-   function handleLogin(){
+   function handleRegister(){
+      console.log(name)
       console.log(email)
       console.log(password)
    }
@@ -20,7 +21,7 @@ export default function Login(){
     return(
         <>
          <Head>
-            <title>BarberPro - Faça login para acessar</title>
+            <title>Crie sua conta no BarberPro</title>
          </Head>
          <Flex background="barber.900" height='100vh' alignItems="center" justifyContent="center">
             <Flex width={640} direction="column" p={14} rounded={10} >
@@ -37,13 +38,26 @@ export default function Login(){
                     background="barber.400"
                     variant="filled"
                     size="lg"
+                    placeholder='Nome da Barbearia'
+                    type='text'
+                    textColor="button.default"
+                    mb={3}
+                    _hover={{ bg: "#1b1c29" }}
+                    value={name}
+                    onChange={(e) => setName(e.target.value) }
+                 />
+
+                <Input
+                    background="barber.400"
+                    variant="filled"
+                    size="lg"
                     placeholder='email@email.com'
                     type='email'
                     textColor="button.default"
                     mb={3}
                     _hover={{ bg: "#1b1c29" }}
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value) }
                  />
 
                 <Input
@@ -56,7 +70,7 @@ export default function Login(){
                     mb={6}
                     _hover={{ bg: "#1b1c29" }}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value) }
                  />
 
                  <Button
@@ -65,14 +79,14 @@ export default function Login(){
                     color="gray.900"
                     size="lg"
                     _hover={{ bg: "#ffb13e" }}
-                    onClick={handleLogin}
+                    onClick={handleRegister}
                  >
-                    Acessar
+                    Cadastrar
                  </Button>
 
                  <Center mt={4} >
-                    <Link href="/register" >
-                        <Text cursor="pointer" color="barber.100" >Ainda não possui conta? <strong>Cadastre-se</strong></Text>
+                    <Link href="/login" >
+                        <Text cursor="pointer" color="barber.100" >Já possui uma conta? <strong>Faça login</strong></Text>
                     </Link>
                  </Center>
             </Flex>
