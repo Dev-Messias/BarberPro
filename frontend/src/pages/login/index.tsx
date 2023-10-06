@@ -9,6 +9,8 @@ import { AuthContext } from '../../context/AuthContext'
 
 import Link from 'next/link';
 
+import { canSSRGuest } from '../../utils/canSSRGuest'
+
 export default function Login(){
 
    const { signIn } = useContext(AuthContext)
@@ -18,6 +20,12 @@ export default function Login(){
 
    //função do botão
    async function handleLogin(){
+
+      //verificando se algum dos campos esta vazio
+      if(email === '' || password === ''){
+         return;
+      }
+
       await signIn({
          email,
          password
@@ -87,3 +95,11 @@ export default function Login(){
         </>
     )
 }
+
+export const getServerSideProps = canSSRGuest(async (ctx) =>{
+   return{
+      props: {
+         
+      }
+   }
+})
