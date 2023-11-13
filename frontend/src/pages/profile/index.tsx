@@ -1,3 +1,4 @@
+import { useContext, useState } from 'react'
 import Head from 'next/head';
 import {
     Flex,
@@ -9,9 +10,56 @@ import {
 } from '@chakra-ui/react';
 
 import { SideBar } from '../../components/sidebar';
-import Link from 'next/link'
+import Link from 'next/link';
+
+import { canSSRAuth } from '../../utils/canSSRAuth';
+import { AuthContext } from '../../context/AuthContext';
+import { setupAPIClient } from '../../services/api';
+
+interface UserProps{
+    id: string;
+    name: string;
+    email: string;
+    endereco: string | null;
+}
+
+interface ProfileProps{
+    user: UserProps;
+    premium: boolean;
+}
  
-export default function Profile(){
+export default function Profile({ user, premium }: ProfileProps){
+
+    const { logoutUser } = useContext(AuthContext);
+
+    const[name, setName] = useState(user && user?.name);
+    const[endereco, setEndereco] = useState(user?.endereco ? user?.endereco : '');
+
+    async function handleLogout(){
+        await logoutUser();
+    }
+
+    async function  handleUpdateUser(){
+
+        if( name === '' ){
+            return;
+        }
+
+        try{
+            const apiClient = setupAPIClient();
+            await apiClient.put('/users', {
+                name: name,
+                endereco: endereco,
+            })
+
+            alert("Dados alterados com sucesso!!")
+
+        }catch(err){
+            console.log(err)
+        }
+
+    }
+
     return(
         <>
             <Head>
@@ -35,6 +83,8 @@ export default function Profile(){
                                 type='text'
                                 color="white"
                                 mb={4}
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
 
                             <Text mb={2} fontSize="xl" fontWeight="bold" color="white" >Endereço :</Text>
@@ -46,6 +96,8 @@ export default function Profile(){
                                 type='text'
                                 color="white"
                                 mb={4}
+                                value={endereco}
+                                onChange={(e) => setEndereco(e.target.value)}
                             />
 
                             <Text mb={2} fontSize="xl" fontWeight="bold" color="white" >Plano atual : </Text>
@@ -62,7 +114,9 @@ export default function Profile(){
                                 justifyContent="space-between"
                             >
 
-                                <Text p={2} fontSize="lg" color="#4dffb4"  >Plano Grátis</Text>
+                                <Text p={2} fontSize="lg" color={premium ? "#FBA931" : "#4dffb4"}  >
+                                    Plano {premium ? "Premium" : "Grátis"}
+                                </Text>
 
                                 <Link href='/planos'>
                                     <Box
@@ -87,6 +141,7 @@ export default function Profile(){
                                 size="lg"
                                 color="white"
                                 _hover={{ bg: '#ffb13e' }}
+                                onClick={handleUpdateUser}
                             >
                                 Salvar
                             </Button>
@@ -100,6 +155,7 @@ export default function Profile(){
                                 size="lg"
                                 color="red.500"
                                 _hover={{ bg: 'transparent' }}
+                                onClick={handleLogout}
                             >
                                 Sair da conta
                             </Button>
@@ -112,3 +168,38 @@ export default function Profile(){
         </>
     )
 }
+
+export const getServerSideProps = canSSRAuth(async (ctx)=> {
+
+    try {
+
+        const apiClient = setupAPIClient(ctx)
+        const response = await apiClient.get('/me')
+
+        const user = {
+            id: response.data.id,
+            name: response.data.name,
+            email: response.data.email,
+            endereco: response.data?.endereco
+        }
+
+        return{
+            props:{
+                user: user,
+                premium: response.data?.subscriptions?.status === 'active' ? true : false
+            }
+        }
+        
+    } catch (err) {
+        console.log(err)
+
+        return{
+            redirect:{
+                destination: 'dashboard',
+                permanent: false,
+            }
+        }
+    }
+
+   
+})
