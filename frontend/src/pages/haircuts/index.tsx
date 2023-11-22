@@ -68,17 +68,18 @@ export default function Haircuts(){
                 <Link href="/haircuts/123"  >
                      <Flex
                       cursor="pointer"
-                      width="97%"
+                      width="100%"
                       p={4}
                       bg="barber.400"
-                      direction="row"
+                      direction={isMobile ? "column" : "row"}
+                      alignItems={isMobile ? "flex-start" : "center"}
                       rounded="4"
+                      marginTop={isMobile ? 4 : 0}
                       mb={2}
                       justifyContent="space-between"
-                      
                      >
 
-                        <Flex>
+                        <Flex mb={isMobile ? 2 : 0} direction="row" alignItems="center" justifyContent="center" >
                             <IoMdPricetag size={28} color="#fba931"  />
                           <Text color="white" marginLeft={4} noOfLines={2} >Nome do Corte</Text>
                         </Flex>
