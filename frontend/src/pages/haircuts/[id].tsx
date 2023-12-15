@@ -1,3 +1,4 @@
+import { useState, ChangeEvent } from 'react'
 import Head from 'next/head';
 import {
     Flex,
@@ -8,15 +9,92 @@ import {
     Input,
     Stack,
     Switch,
+    useToast,
 } from '@chakra-ui/react'
 
 import { SideBar } from '../../components/sidebar';
 import { FiChevronLeft } from 'react-icons/fi';
 import Link from 'next/link';
 
-export default function EditHaircut(){
+import { canSSRAuth } from '../../utils/canSSRAuth'
+import { setupAPIClient } from '../../services/api'
+
+interface HaircutProps{
+    id: string;
+    name: string;
+    price: string | number ;
+    status: boolean;
+    user_id: string;
+}
+
+interface SubscriptionProps{
+    id: string;
+    status: string;
+}
+
+
+interface EditHaircutProps{
+    haircut: HaircutProps;
+    subscription: SubscriptionProps | null;
+}
+
+export default function EditHaircut({ subscription, haircut }: EditHaircutProps){
 
     const [isMobile] = useMediaQuery("(max-width: 500px)");
+
+    const [name, setName] = useState(haircut?.name);
+    const [price, setPrice] = useState(haircut?.price);
+    const [status, setStatus] = useState(haircut?.status);
+
+    const [disableHaircut, setDisableHaircut] = useState(haircut?.status ? "disabled" : "enabled" );
+    //console.log(haircut)
+
+    const toast = useToast()
+
+    function handleChangeStatus(e: ChangeEvent<HTMLInputElement>){
+        if(e.target.value === 'disabled'){
+            setDisableHaircut("enabled")
+            setStatus(false);
+        }else{
+            setDisableHaircut("disabled")
+            setStatus(true);
+        }
+    }
+
+    async function handleUpdate(){
+        if(name === '' || price === ''){
+            toast({
+                title: `Erro - Campos de texto vazios☹️!!`,
+                position:"top-right",
+                status: 'error',
+                isClosable: true,
+              })
+            return;
+        }
+
+        try {
+
+            const apiClient = setupAPIClient();
+            await apiClient.put('/haircut', {
+                name: name,
+                price: Number(price),
+                status: status,
+                haircut_id: haircut?.id
+            })
+
+            toast({
+                title: `Corte atualizado com sucesso😉!!`,
+                position:"top-right",
+                status: 'success',
+                isClosable: true,
+              })
+
+            //alert("Corte atualizado com sucess!")
+            
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     return(
         <>
@@ -59,6 +137,8 @@ export default function EditHaircut(){
                                size="lg"
                                type='text'
                                w="100%"
+                               value={name}
+                               onChange={(e) => setName(e.target.value)}
                             />
 
                             <Input
@@ -69,6 +149,8 @@ export default function EditHaircut(){
                                size="lg"
                                type='number'
                                w="100%"
+                               value={price}
+                               onChange={(e) => setPrice(e.target.value)}
                             />
 
                             <Stack mb={6} align="center" direction="row" >
@@ -76,6 +158,10 @@ export default function EditHaircut(){
                                 <Switch
                                     size="lg"
                                     colorScheme="red"
+                                    isDisabled={subscription?.status !== 'active' }
+                                    value={disableHaircut}
+                                    isChecked={disableHaircut === 'disabled' ? false : true }
+                                    onChange={(e: ChangeEvent<HTMLInputElement> ) => handleChangeStatus(e)}
                                 />
                             </Stack>
 
@@ -85,9 +171,23 @@ export default function EditHaircut(){
                                 bg="button.cta"
                                 color="gray.900"
                                 _hover={{ bg: "button.cta" }}
+                                isDisabled={subscription?.status !== 'active' }
+                                onClick={handleUpdate}
                             >
                                 Salvar
                             </Button>
+
+                            {subscription?.status !== 'active' && (
+                            <Flex direction="row" align="center" justifyContent="center" >
+                                <Link href="/planos" >
+                                    <Text fontWeight="bold" color="#31FB6A" cursor='pointer' ml={1} mr={1} > Seja premium </Text>
+                                </Link>
+
+                                <Text color="white" >
+                                     e tenha todos acessos libarados
+                                </Text>
+                            </Flex>
+                        )}
 
                         </Flex>
 
@@ -98,3 +198,44 @@ export default function EditHaircut(){
         </>
     )
 }
+
+
+export const getServerSideProps = canSSRAuth(async (ctx) => {
+
+    const { id } = ctx.params;
+
+    //buscando dados do item com base no id
+    try {
+
+        const apiClient = setupAPIClient(ctx);
+
+        const check = await apiClient.get('/haircut/check');
+
+        const response = await apiClient.get('/haircut/detail', {
+            params:{
+                haircut_id: id,
+                
+            }
+        })
+
+        //console.log(response.data);
+       // console.log(check.data);
+
+       return{
+        props:{
+            haircut: response.data,
+            subscription: check.data?.subscriptions
+        }
+       }
+
+
+       
+    } catch (err) {
+        return{
+            redirect:{
+                destination:'/dashboard',
+                permanent: false
+            }
+        }
+    }
+})
