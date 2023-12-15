@@ -7,6 +7,7 @@ import {
     Button,
     Link as ChakraLink,
     useMediaQuery,
+    useDisclosure,
 } from '@chakra-ui/react';
 
 import { canSSRAuth } from '../../utils/canSSRAuth';
@@ -15,6 +16,8 @@ import Link from 'next/link';
 import { IoMdPerson } from 'react-icons/io';
 
 import { setupAPIClient } from '../../services/api';
+
+import { ModalInfo } from '../../components/modal';
 
 export interface ScheduleItem{
     id: string;
@@ -34,8 +37,42 @@ interface DashboardProps{
 export default function Dashboard({schedule}: DashboardProps){
 
     const [list, setList] = useState(schedule);
+    const [services, setService] = useState<ScheduleItem>();
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [isMobile] = useMediaQuery("(max-width: 500px)");
+
+    function handleOpenModal(item: ScheduleItem){
+        setService(item);
+        onOpen();
+    }
+
+    async function handleFinish(id: string){
+       try {
+
+        const apiclient = setupAPIClient();
+        await apiclient.delete('/schedule', {
+            params:{
+                schedule_id: id
+            }
+        })
+
+        //retirando item da lista
+        const filterItem = list.filter(item => {
+            return (item?.id !== id) //percorrendo a lista e buscando todos os item que são diferentes do id que foi passado
+        })
+
+        setList(filterItem);
+
+        onClose();
+        
+       } catch (err) {
+            console.log(err)
+            onClose();
+            alert("Erro ao finalizar este serviço  ")
+       }
+    }
 
     return(
         <>
@@ -60,6 +97,7 @@ export default function Dashboard({schedule}: DashboardProps){
 
                 {list.map(item => (
                     <ChakraLink
+                    onClick={()=> handleOpenModal(item) }
                     key={item?.id}
                     w="100%"
                     m={0}
@@ -93,6 +131,14 @@ export default function Dashboard({schedule}: DashboardProps){
 
              </Flex>
            </SideBar>
+
+           <ModalInfo
+                isOpen={isOpen}
+                onOpen={onOpen}
+                onClose={onClose}
+                data={services}
+                finishService={  () => handleFinish(services?.id) }
+           />
         </>
     )
 }
