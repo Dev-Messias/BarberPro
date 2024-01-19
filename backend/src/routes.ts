@@ -19,6 +19,9 @@ import { isAuyhenticated } from './middlewares/isAuthenticated';
 import { ListScheduleController } from './controller/schedule/ListScheduleController';
 import { FinishScheduleController } from './controller/schedule/FinishScheduleController';
 
+import { SubscribeController } from'./controller/subscription/SubscribeController';
+import { WebHooksController } from './controller/subscription/WebHooksController';
+
 const router = Router();
 
 /*router.get('/teste', (req: Request, res: Response)=>{
@@ -43,5 +46,9 @@ router.get('/haircut/detail', isAuyhenticated, new DetailHaircutController().han
 router.post('/schedule', isAuyhenticated, new NewScheduleController().handle);
 router.get('/schedule', isAuyhenticated, new ListScheduleController().handle);
 router.delete('/schedule', isAuyhenticated, new FinishScheduleController().handle);
+
+//=== ROTAS PAGAMENTOS ==
+router.post('/subscribe', isAuyhenticated, new SubscribeController().handle);
+router.post('/webhooks', new WebHooksController().handle);
 
 export  { router };

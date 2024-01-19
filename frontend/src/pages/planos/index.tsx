@@ -10,7 +10,8 @@ import {
 import { SideBar } from '../../components/sidebar';
 import { canSSRAuth } from '../../utils/canSSRAuth';
 import { setupAPIClient } from '../../services/api';
-import { Console } from "console";
+
+import { getStripeJs } from '../../services/stripe-js';
 
 interface PlanosProps{
     premium: boolean;
@@ -19,6 +20,26 @@ interface PlanosProps{
 export default function Planos({ premium }: PlanosProps) {
 
     const [isMobile] = useMediaQuery('(max-width: 500px)');
+
+    const handleSubscribe = async () => {
+        if(premium){
+            return;
+        }
+
+        try {
+
+            const apiClient = setupAPIClient();
+            const response = await apiClient.post('/subscribe')
+
+            const { sessionId } = response.data;
+
+            const stripe = getStripeJs();
+            (await stripe).redirectToCheckout({ sessionId: sessionId })
+            
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <>
@@ -72,13 +93,13 @@ export default function Planos({ premium }: PlanosProps) {
                             <Text fontWeight="medium" ml={4} mb={2} color="white"  >Editar modelos de cortes.</Text>
                             <Text fontWeight="medium" ml={4} mb={2} color="white"  >Editar dados do perfil.</Text>
                             <Text fontWeight="medium" ml={4} mb={2} color="white"  >Receber todas as atualizações.</Text>
-                            <Text fontWeight="bold" fontSize="1xl" ml={4} mb={2} color="#31fb6a"  >R$ 10.99</Text>
+                            <Text fontWeight="bold" fontSize="1xl" ml={4} mb={2} color="#31fb6a"  >R$ 9.90</Text>
 
                             <Button
                              bg={premium ? "barber.900" : "button.cta"}
                              m={2}
                              color={premium ? "white" : "barber.900"}
-                             onClick={() => {}}
+                             onClick={handleSubscribe}
                              isDisabled={premium}
                             >
                                 {premium ? (
